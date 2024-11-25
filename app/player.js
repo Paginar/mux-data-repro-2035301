@@ -6,7 +6,12 @@ import muxReactNativeVideo from "@mux/mux-data-react-native-video";
 
 import * as ScreenOrientation from "expo-screen-orientation";
 
-export default function Player({ navigation }) {
+export default function Player({
+  navigation,
+  route: {
+    params: { useDRM, useMuxWrapper },
+  },
+}) {
   const [source, setSource] = useState(null);
   const [sourceLoaded, setSourceLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -137,10 +142,18 @@ export default function Player({ navigation }) {
       drmToken,
     });
     setSourceLoaded(true);
-    setSource({
-      uri,
-      drm,
-    });
+
+    if (useDRM) {
+      setSource({
+        uri,
+        drm,
+      });
+    } else {
+      setSource({
+        uri: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        drm: null,
+      });
+    }
   };
 
   return (
@@ -206,52 +219,93 @@ export default function Player({ navigation }) {
                 </View>
               </>
             ) : (
-              <MuxVideo
-                //key={currentVideoTrack}
-                ignoreSilentSwitch="ignore"
-                ref={videoRef}
-                controls={isAndroid()}
-                styles={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  zIndex: 2,
-                }}
-                resizeMode="contain"
-                source={{
-                  uri: source.uri,
-                  drm: source.drm,
-                }}
-                muxOptions={{
-                  application_name: "mux example",
-                  data: {
-                    env_key: "te712rd1i0s93g9p7mhgobtf8",
-                    player_software_version: "6.6.2",
-                    player_name: "React Native Player",
-                    video_id: "My Video Id",
-                    video_title: "My awesome video",
-                  },
-                }}
-                onLoad={(data) => {
-                  setSourceLoaded(true);
+              <>
+                {useMuxWrapper ? (
+                  <MuxVideo
+                    //key={currentVideoTrack}
+                    ignoreSilentSwitch="ignore"
+                    ref={videoRef}
+                    controls={isAndroid()}
+                    styles={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      zIndex: 2,
+                    }}
+                    resizeMode="contain"
+                    source={{
+                      uri: source.uri,
+                      drm: source.drm,
+                    }}
+                    muxOptions={{
+                      application_name: "mux example",
+                      data: {
+                        env_key: "te712rd1i0s93g9p7mhgobtf8",
+                        player_software_version: "6.6.2",
+                        player_name: "React Native Player",
+                        video_id: "My Video Id",
+                        video_title: "My awesome video",
+                      },
+                    }}
+                    onLoad={(data) => {
+                      setSourceLoaded(true);
 
-                  setFullscreen(true);
-                }}
-                muted={false}
-                onError={(e) => {
-                  console.log("error", e);
-                  setLoading(true);
-                  setHasError(true);
-                }}
-                onFullscreenPlayerDidDismiss={() => {
-                  exitVideo(false);
-                }}
-                onEnd={() => {
-                  exitVideo(true);
-                }}
-              />
+                      setFullscreen(true);
+                    }}
+                    muted={false}
+                    onError={(e) => {
+                      console.log("error", e);
+                      setLoading(true);
+                      setHasError(true);
+                    }}
+                    onFullscreenPlayerDidDismiss={() => {
+                      exitVideo(false);
+                    }}
+                    onEnd={() => {
+                      exitVideo(true);
+                    }}
+                  />
+                ) : (
+                  <Video
+                    //key={currentVideoTrack}
+                    ignoreSilentSwitch="ignore"
+                    ref={videoRef}
+                    controls={isAndroid()}
+                    styles={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      zIndex: 2,
+                    }}
+                    resizeMode="contain"
+                    source={{
+                      uri: source.uri,
+                      drm: source.drm,
+                    }}
+                    onLoad={(data) => {
+                      setSourceLoaded(true);
+
+                      setFullscreen(true);
+                    }}
+                    muted={false}
+                    onError={(e) => {
+                      console.log("error", e);
+                      setLoading(true);
+                      setHasError(true);
+                    }}
+                    onFullscreenPlayerDidDismiss={() => {
+                      exitVideo(false);
+                    }}
+                    onEnd={() => {
+                      exitVideo(true);
+                    }}
+                  />
+                )}
+              </>
             )}
           </>
         )}

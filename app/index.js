@@ -3,15 +3,63 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Player from "./player";
 
-const HomeComponent = ({ navigation }) => (
-  <View style={styles.container}>
-    <View style={styles.buttonContainer}>
-      <TouchableOpacity onPress={() => navigation.navigate("Player")}>
-        <Text style={styles.buttonText}>Press To Play</Text>
-      </TouchableOpacity>
+function HomeComponent({ navigation }) {
+  return (
+    <View style={styles.container}>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("Player", { useDRM: true, useMuxWrapper: true })
+          }
+        >
+          <Text style={styles.buttonText}>Play (With DRM and Mux wrapper)</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("Player", {
+              useDRM: false,
+              useMuxWrapper: true,
+            })
+          }
+        >
+          <Text style={styles.buttonText}>
+            Play (Without DRM and Mux wrapper)
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("Player", {
+              useDRM: true,
+              useMuxWrapper: false,
+            })
+          }
+        >
+          <Text style={styles.buttonText}>
+            Play (With DRM without Mux wrapper)
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("Player", {
+              useDRM: false,
+              useMuxWrapper: false,
+            })
+          }
+        >
+          <Text style={styles.buttonText}>
+            Play (Without DRM without Mux wrapper)
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
-  </View>
-);
+  );
+}
 
 export default function Index() {
   const Stack = createStackNavigator();
@@ -44,7 +92,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff", // Neutral white background
   },
   buttonContainer: {
-    backgroundColor: "#f2f2f2", // Neutral light gray background
+    backgroundColor: "#f2f2f2",
+    margin: 2, // Neutral light gray background
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8, // Slightly rounded corners
